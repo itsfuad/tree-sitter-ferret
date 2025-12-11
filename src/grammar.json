@@ -2119,7 +2119,7 @@
       }
     },
     "result_type": {
-      "type": "PREC",
+      "type": "PREC_RIGHT",
       "value": 3,
       "content": {
         "type": "SEQ",

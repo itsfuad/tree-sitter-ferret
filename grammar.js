@@ -450,7 +450,7 @@ module.exports = grammar({
       ),
 
     result_type: ($) =>
-      prec(
+      prec.right(
         3,
         seq(field("error_type", $.type), "!", field("success_type", $.type)),
       ),
