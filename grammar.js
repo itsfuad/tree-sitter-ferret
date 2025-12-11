@@ -3,8 +3,6 @@ module.exports = grammar({
 
   extras: ($) => [/\s/, $.line_comment, $.block_comment],
 
-  conflicts: ($) => [[$.optional_type, $.reference_type]],
-
   rules: {
     source_file: ($) => repeat($._statement),
 
@@ -15,7 +13,6 @@ module.exports = grammar({
         $.constant_declaration,
         $.function_declaration,
         $.type_declaration,
-        $.enum_declaration,
         $.return_statement,
         $.if_statement,
         $.while_statement,
@@ -56,17 +53,27 @@ module.exports = grammar({
         ";",
       ),
 
-    // Type declarations (structs)
+    // Type declarations
     type_declaration: ($) =>
-      seq(
-        "type",
-        field("name", $.type_identifier),
-        "struct",
-        field("body", $.struct_body),
-        ";",
-      ),
+      seq("type", field("name", $.type_identifier), field("type", $.type), ";"),
+
+    struct_type: ($) => seq("struct", field("body", $.struct_body)),
+
+    enum_type: ($) => seq("enum", field("body", $.enum_body)),
+
+    interface_type: ($) => seq("interface", field("body", $.interface_body)),
 
     struct_body: ($) => seq("{", repeat($.field_declaration), "}"),
+
+    interface_body: ($) => seq("{", repeat($.interface_method), "}"),
+
+    interface_method: ($) =>
+      seq(
+        field("name", $.identifier),
+        field("parameters", $.parameter_list),
+        optional(seq("->", field("return_type", $.return_type))),
+        ";",
+      ),
 
     field_declaration: ($) =>
       seq(
@@ -75,16 +82,6 @@ module.exports = grammar({
         ":",
         field("type", $.type),
         ",",
-      ),
-
-    // Enum declarations
-    enum_declaration: ($) =>
-      seq(
-        "type",
-        field("name", $.type_identifier),
-        "enum",
-        field("body", $.enum_body),
-        ";",
       ),
 
     enum_body: ($) =>
@@ -363,6 +360,9 @@ module.exports = grammar({
     type: ($) =>
       choice(
         $.result_type,
+        $.struct_type,
+        $.enum_type,
+        $.interface_type,
         $.primitive_type,
         $.type_identifier,
         $.array_type,
@@ -428,6 +428,9 @@ module.exports = grammar({
             $.array_type,
             $.dynamic_array_type,
             $.map_type,
+            $.struct_type,
+            $.enum_type,
+            $.interface_type,
           ),
           "?",
         ),
@@ -445,13 +448,16 @@ module.exports = grammar({
             $.dynamic_array_type,
             $.map_type,
             $.optional_type,
+            $.struct_type,
+            $.enum_type,
+            $.interface_type,
           ),
         ),
       ),
 
     result_type: ($) =>
       prec.right(
-        3,
+        10,
         seq(field("error_type", $.type), "!", field("success_type", $.type)),
       ),
 

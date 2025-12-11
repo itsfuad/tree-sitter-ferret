@@ -1,0 +1,17 @@
+let x: i32 = 42;
+
+type ID u64;
+
+type Point struct {
+  .x: i32,
+  .y: i32,
+};
+
+type Shape enum { Circle, Square, };
+
+type Stream interface {
+  read();
+  write() -> i32;
+};
+
+let anon: struct { .v: i32, } = { .v = 1 };
