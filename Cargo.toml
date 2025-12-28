@@ -7,7 +7,7 @@ license = "MIT"
 readme = "README.md"
 keywords = ["incremental", "parsing", "tree-sitter", "ferret"]
 categories = ["parser-implementations", "parsing", "text-editors"]
-repository = "https://github.com/itsfuad/tree-sitter-ferret"
+repository = "https://github.com/Ferret-Language/tree-sitter-ferret"
 edition = "2021"
 autoexamples = false
 
