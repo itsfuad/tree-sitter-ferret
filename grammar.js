@@ -65,6 +65,8 @@ module.exports = grammar({
 
     enum_type: ($) => seq("enum", field("body", $.enum_body)),
 
+    union_type: ($) => seq("union", field("body", $.union_body)),
+
     interface_type: ($) => seq("interface", field("body", $.interface_body)),
 
     struct_body: ($) => seq("{", repeat($.field_declaration), "}"),
@@ -94,6 +96,13 @@ module.exports = grammar({
         optional(
           seq($.enum_variant, repeat(seq(",", $.enum_variant)), optional(",")),
         ),
+        "}",
+      ),
+
+    union_body: ($) =>
+      seq(
+        "{",
+        optional(seq($.type, repeat(seq(",", $.type)), optional(","))),
         "}",
       ),
 
@@ -182,6 +191,7 @@ module.exports = grammar({
         $.boolean_literal,
         $.none_literal,
         $.binary_expression,
+        $.is_expression,
         $.unary_expression,
         $.call_expression,
         $.field_expression,
@@ -218,6 +228,8 @@ module.exports = grammar({
         // Coalescing operator
         prec.left(8, seq($._expression, "??", $._expression)),
       ),
+
+    is_expression: ($) => prec.left(3, seq($._expression, "is", $.type)),
 
     // Unary expressions
     unary_expression: ($) =>
@@ -392,6 +404,7 @@ module.exports = grammar({
         $.result_type,
         $.struct_type,
         $.enum_type,
+        $.union_type,
         $.interface_type,
         $.primitive_type,
         $.type_identifier,
@@ -460,6 +473,7 @@ module.exports = grammar({
             $.map_type,
             $.struct_type,
             $.enum_type,
+            $.union_type,
             $.interface_type,
           ),
           "?",
@@ -480,6 +494,7 @@ module.exports = grammar({
             $.optional_type,
             $.struct_type,
             $.enum_type,
+            $.union_type,
             $.interface_type,
           ),
         ),
