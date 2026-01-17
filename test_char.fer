@@ -1,0 +1,3 @@
+let ch: char = 'A';
+let emoji: char = '💡';
+let bytes: byte = b'X';

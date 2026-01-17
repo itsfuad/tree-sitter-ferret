@@ -198,6 +198,7 @@ module.exports = grammar({
         $.integer_literal,
         $.float_literal,
         $.string_literal,
+        $.char_literal,
         $.byte_literal,
         $.boolean_literal,
         $.none_literal,
@@ -527,7 +528,9 @@ module.exports = grammar({
     string_literal: ($) =>
       seq('"', repeat(choice($.escape_sequence, /[^"\\]/)), '"'),
 
-    byte_literal: ($) => seq("'", choice($.escape_sequence, /[^'\\]/), "'"),
+    char_literal: ($) => seq("'", choice($.escape_sequence, /[^'\\]/), "'"),
+
+    byte_literal: ($) => seq("b'", choice($.escape_sequence, /[^'\\]/), "'"),
 
     escape_sequence: ($) =>
       token(
